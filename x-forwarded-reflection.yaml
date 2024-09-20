@@ -1,0 +1,31 @@
+id: x-forwarded-reflection
+info:
+  name: "X-Forwarded Header Reflection"
+  author: SirBugs
+  severity: medium
+  description: "This template detects the reflection of X-Forwarded headers in the response."
+
+requests:
+  - raw:
+      - |
+        GET / HTTP/1.1
+        Host: {{Hostname}}
+        X-Forwarded-Host: {{randstr}}
+        X-Forwarded-For: {{randstr}}
+        Connection: close
+
+    matchers:
+      - type: word
+        words:
+          - "{{randstr}}"
+        part: body
+
+      - type: word
+        words:
+          - "{{randstr}}"
+        part: headers
+
+    extractors:
+      - type: regex
+        regex:
+          - "{{randstr}}"
